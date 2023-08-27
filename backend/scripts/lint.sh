@@ -2,7 +2,7 @@
 
 set -x
 
-mypy app
-black app --check
-isort  app
+mypy src
+black src --check
+isort  src
 flake8

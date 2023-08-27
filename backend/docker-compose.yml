@@ -28,6 +28,19 @@ services:
       - app_pg_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  app_pg_admin:
+    container_name: app_pg_admin
+    image: dpage/pgadmin4:7.6
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=app
+    ports:
+      - "5050:80"
+    depends_on:
+      - app_db
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    restart: always
 
   app_redis:
     image: redis:6.2-alpine
@@ -41,6 +54,8 @@ services:
 
 volumes:
   app_pg_data:
+    driver: "local"
+  pgadmin:
     driver: "local"
 
 networks:

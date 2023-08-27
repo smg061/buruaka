@@ -1,5 +1,6 @@
-from typing import Any
 from enum import Enum
+from typing import Any
+
 from pydantic import PostgresDsn, root_validator
 from pydantic_settings import BaseSettings
 
@@ -26,7 +27,7 @@ class Environment(str, Enum):
 class Settings(BaseSettings):
     DATABASE_URL: PostgresDsn
 
-    SITE_DOMAIN: str = "localhost:8000"
+    SITE_DOMAIN: str = "localhost:5173"
 
     ENVIRONMENT: Environment = Environment.LOCAL
 
@@ -57,5 +58,5 @@ app_configs: dict[str, Any] = {
 if settings.ENVIRONMENT.is_deployed:
     app_configs["root_path"] = f"v/{settings.APP_VERSION}"
 
-if not settings.ENVIRONMENT.is_debug:
-    app_configs["openapi_url"] = None  # hide docs
+# if not settings.ENVIRONMENT.is_debug:
+#     app_configs["openapi_url"] = None  # hide docs
