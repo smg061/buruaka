@@ -35,3 +35,48 @@ refresh_tokens = Table(
     Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column("updated_at", DateTime, onupdate=func.now()),
 )
+
+students = Table(
+    "students",
+    metadata,
+    Column("id", Integer, Identity(), primary_key=True),
+    Column("first_name", String, nullable=False),
+    Column("last_name", String, nullable=False),
+    Column("email", String, nullable=False),
+    Column("profile_picture", String, nullable=False),
+    Column("sprite", String, nullable=False),
+    Column("phone_number", String, nullable=False),
+    Column("created_at", DateTime, server_default=func.now(), nullable=False),
+    Column("updated_at", DateTime, onupdate=func.now()),
+)
+
+student_phrases= Table(
+    "student_phrases",
+    metadata,
+    Column("id", Integer, Identity(), primary_key=True),
+    Column("student_id", ForeignKey("students.id", ondelete="CASCADE"), nullable=False),
+    Column("phrase", String, nullable=False),
+    Column("created_at", DateTime, server_default=func.now(), nullable=False),
+    Column("updated_at", DateTime, onupdate=func.now()),
+)
+
+sensei_messages= Table(
+    "sensei_messages",
+    metadata,
+    Column("id", Integer, Identity(), primary_key=True),
+    Column("student_id", ForeignKey("students.id", ondelete="CASCADE"), index=True, nullable=False),
+    Column("message", String, nullable=False),
+    Column("created_at", DateTime, server_default=func.now(), nullable=False),
+    Column("updated_at", DateTime, onupdate=func.now()),
+)
+
+student_messages= Table(
+    "student_messages",
+    metadata,
+    Column("id", Integer, Identity(), primary_key=True),
+    Column("student_id", ForeignKey("students.id", ondelete="CASCADE"), index=True, nullable=False),
+    Column("message", String, nullable=False),
+    Column("created_at", DateTime, server_default=func.now(), nullable=False),
+    Column("updated_at", DateTime, onupdate=func.now()),
+)
+
