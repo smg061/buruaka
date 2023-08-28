@@ -11,5 +11,5 @@ pydantic-settings==2.0.3
 pydantic[email]
 fastapi==0.103.0
 uvicorn[standard]==0.23.0
-
+tzdata==2023.3
 sentry-sdk==1.12.1

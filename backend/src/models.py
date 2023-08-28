@@ -1,6 +1,6 @@
+import zoneinfo
 from datetime import datetime
 from typing import Any, Callable
-from zoneinfo import ZoneInfo
 
 import orjson
 from pydantic import BaseModel, root_validator
@@ -12,15 +12,15 @@ def orjson_dumps(v: Any, *, default: Callable[[Any], Any] | None) -> str:
 
 def convert_datetime_to_gmt(dt: datetime) -> str:
     if not dt.tzinfo:
-        dt = dt.replace(tzinfo=ZoneInfo("UTC"))
+        dt = dt.replace(tzinfo=zoneinfo.ZoneInfo("UTC"))
 
     return dt.strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
 class ORJSONModel(BaseModel):
     class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
+        loads = orjson.loads
+        dumps = orjson_dumps
         json_encoders = {datetime: convert_datetime_to_gmt}
         populate_by_name = True
 

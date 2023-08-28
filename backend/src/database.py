@@ -50,7 +50,7 @@ students = Table(
     Column("updated_at", DateTime, onupdate=func.now()),
 )
 
-student_phrases= Table(
+student_phrases = Table(
     "student_phrases",
     metadata,
     Column("id", Integer, Identity(), primary_key=True),
@@ -60,23 +60,32 @@ student_phrases= Table(
     Column("updated_at", DateTime, onupdate=func.now()),
 )
 
-sensei_messages= Table(
+sensei_messages = Table(
     "sensei_messages",
     metadata,
     Column("id", Integer, Identity(), primary_key=True),
-    Column("student_id", ForeignKey("students.id", ondelete="CASCADE"), index=True, nullable=False),
+    Column(
+        "student_id",
+        ForeignKey("students.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    ),
     Column("message", String, nullable=False),
     Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column("updated_at", DateTime, onupdate=func.now()),
 )
 
-student_messages= Table(
+student_messages = Table(
     "student_messages",
     metadata,
     Column("id", Integer, Identity(), primary_key=True),
-    Column("student_id", ForeignKey("students.id", ondelete="CASCADE"), index=True, nullable=False),
+    Column(
+        "student_id",
+        ForeignKey("students.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    ),
     Column("message", String, nullable=False),
     Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column("updated_at", DateTime, onupdate=func.now()),
 )
-

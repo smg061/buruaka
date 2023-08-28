@@ -8,7 +8,8 @@ from starlette.middleware.cors import CORSMiddleware
 from src.auth.router import router as auth_router
 from src.config import app_configs, settings
 from src.database import database
-from src.routes.router import router as api_router
+from src.messages.router import router as messages_router
+from src.students.router import router as students_router
 
 
 @asynccontextmanager
@@ -23,7 +24,6 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
 
 
 app = FastAPI(**app_configs, lifespan=lifespan)
-print(settings.CORS_ORIGINS, "settings.CORS_ORIGINS")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -46,4 +46,5 @@ async def healthcheck() -> dict[str, str]:
 
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-app.include_router(api_router, prefix="/api/v1", tags=["API"])
+app.include_router(messages_router, prefix="/api/v1", tags=["Messages"])
+app.include_router(students_router, prefix="/api/v1", tags=["Students"])
