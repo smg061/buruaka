@@ -1,18 +1,31 @@
 module.exports = {
-  root: true,
-  env: { browser: true, es2020: true },
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
+  overrides: [
+    {
+      extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
+      files: ['*.ts', '*.tsx'],
+      parserOptions: {
+        project: ['tsconfig.json', 'tsconfig.node.json'],
+      },
+    },
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  parserOptions: {
+    project: ['./tsconfig.json', './tsconfig.node.json'],
+  },
+
+  plugins: ['@typescript-eslint'],
+  extends: ['plugin:@typescript-eslint/recommended'],
   rules: {
-    'react-refresh/only-export-components': [
+    '@typescript-eslint/consistent-type-imports': 'warn',
+    'no-console': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-misused-promises': [
       'warn',
-      { allowConstantExport: true },
+      {
+        checksVoidReturn: {
+          attributes: false,
+        },
+      },
     ],
   },
-}
+};
