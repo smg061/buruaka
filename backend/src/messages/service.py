@@ -1,11 +1,11 @@
 from datetime import datetime
+from typing import Mapping
 
 from databases.interfaces import Record
 from sqlalchemy import insert, select
 
 from src.database import database, student_messages, students
 from src.messages.schemas import StudentMessageCreate
-from typing import Mapping
 
 
 async def get_student_messages(id: int, limit: int = 10) -> list[Mapping]:

@@ -1,7 +1,18 @@
 from databases import Database
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Identity,
-                        Integer, LargeBinary, MetaData, String, Table,
-                        create_engine, func)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Identity,
+    Integer,
+    LargeBinary,
+    MetaData,
+    String,
+    Table,
+    create_engine,
+    func,
+)
 from sqlalchemy.dialects.postgresql import UUID
 
 from src.config import settings
@@ -46,6 +57,9 @@ students = Table(
     Column("profile_picture", String, nullable=False),
     Column("sprite", String, nullable=False),
     Column("phone_number", String, nullable=False),
+    Column("relationship_level", Integer, default=1, server_default="1", nullable=False),
+    Column("profile_message", String, nullable=False),
+    Column("dob", DateTime, nullable=False),
     Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column("updated_at", DateTime, onupdate=func.now()),
 )

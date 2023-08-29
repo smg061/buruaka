@@ -16,7 +16,7 @@ class Environment(str, Enum):
     PRODUCTION = "PRODUCTION"
 
     @property
-    def is_debug(self)-> bool:
+    def is_debug(self) -> bool:
         return self in (self.LOCAL, self.STAGING, self.TESTING)
 
     @property

@@ -1,5 +1,6 @@
-from src.messages.schemas import Message
 from databases.interfaces import Record
+
+from src.messages.schemas import Message
 
 
 def map_messages(data: Record | None) -> list[Message]:
