@@ -6,7 +6,6 @@ from src.models import ORJSONModel
 class Message(ORJSONModel):
     message: str
     created_at: datetime
-    student_id: int | None = None
     sender: str
 
     class Config:

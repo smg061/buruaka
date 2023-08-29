@@ -5,9 +5,10 @@ from sqlalchemy import insert, select
 
 from src.database import database, student_messages, students
 from src.messages.schemas import StudentMessageCreate
+from typing import Mapping
 
 
-async def get_student_messages(id: int, limit: int = 10) -> Record | None:
+async def get_student_messages(id: int, limit: int = 10) -> list[Mapping]:
     query_raw = """
     SELECT message, created_at, 'student' as sender
     FROM student_messages
@@ -27,7 +28,7 @@ async def get_student_by_id(id: int) -> Record | None:
     return result
 
 
-async def create_student_message(data: StudentMessageCreate) -> Record | None:
+async def create_student_message(data: StudentMessageCreate) -> list[Mapping] | None:
     insert_query = (
         insert(student_messages)
         .values(
