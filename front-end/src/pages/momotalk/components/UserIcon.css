@@ -1,0 +1,13 @@
+circle {
+    stroke:  #64748B;
+    stroke-width: 0.6px;    
+    stroke-linejoin: round;
+    position: relative;
+}
+circle::after{
+    filter: drop-shadow(1px -1px 1px rgba(80, 79, 79, 0.4));
+    stroke:  rgba(80, 79, 79, 0.4);
+    stroke-width: 1px;    
+    stroke-linejoin: round;
+    position: relative;
+}

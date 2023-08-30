@@ -1,13 +1,13 @@
-export default function HeartSvg({level}: {level: number}) {
+export default function HeartSvg({level, textSize}: {level: number; textSize: 'xs' | 'sm' | 'md' | 'lg' | 'xl'}) {
   return (
     <div className="relative  m-0  flex h-full w-full items-center justify-center p-0">
-      <p className="text-stroke absolute text-slate-700 ">{level}</p>
-      <svg id="heart-svg" viewBox="467 392 58 57" xmlns="http://www.w3.org/2000/svg" className={'text-momo fill-momo'}>
+      <p className={`text-stroke absolute text-slate-700  text-${textSize}`}>{level}</p>
+      <svg id="heart-svg" viewBox="467 392 58 57" xmlns="http://www.w3.org/2000/svg" className={'fill-momo text-momo'}>
         <g id="Group" fill="none" fillRule="evenodd" transform="translate(467 392)" className="">
           <path
             id="heart"
             d="M29.144 20.773c-.063-.13-4.227-8.67-11.44-2.59C7.63 28.795 28.94 43.256 29.143 43.394c.204-.138 21.513-14.6 11.44-25.213-7.214-6.08-11.377 2.46-11.44 2.59z"
-            className={'text-momo fill-momo stroke-momo-dark stroke-2'}
+            className={'fill-momo stroke-momo-dark stroke-2 text-momo'}
           />
           <circle id="main-circ" fill="#E2264D" opacity="0" cx="29.5" cy="29.5" r="1.5" />
 

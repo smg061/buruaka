@@ -1,4 +1,27 @@
-
 .text-stroke {
-    text-shadow: 0.1px 0.1px 1.5px white;
+  text-shadow: 0.1px 0.1px 1.5px white;
+}
+
+.trapezoid {
+  /* clip-path: polygon(8.3% 0%, 100% 0%, 91.6% 99.5%, 0% 100%);
+    --webkit-clip-path : polygon(8.3% 0%, 100% 0%, 91.6% 99.5%, 0% 100%); */
+  transform: skew(-15deg);
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  background: transparent;
+  outline: transparent;
+  outline-offset: -5px;
+  border-radius: 0px !important;
+  -webkit-border-radius: 0px !important;
 }
