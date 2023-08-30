@@ -12,6 +12,7 @@ from sqlalchemy import (
     Table,
     create_engine,
     func,
+    Enum
 )
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -102,4 +103,6 @@ student_messages = Table(
     Column("message", String, nullable=False),
     Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column("updated_at", DateTime, onupdate=func.now()),
+    Column("is_read", Boolean, server_default="false", default=False, nullable=False),
+    Column("message_type", Enum("text", "picture", name="message_type"), nullable=False, server_default="text", default="text"),
 )

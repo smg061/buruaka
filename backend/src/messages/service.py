@@ -39,3 +39,12 @@ async def create_student_message(data: StudentMessageCreate) -> list[Mapping] | 
         .returning(student_messages)
     )
     return await database.fetch_one(insert_query)
+
+async def get_unread_message_count() -> int:
+    query_raw = """
+    SELECT count(*) as count
+    FROM student_messages
+    WHERE read = false
+    """
+    result = await database.fetch_one(query_raw, values={"id": id})
+    return result["count"]

@@ -1,4 +1,7 @@
+from datetime import datetime
+from typing import Mapping
 from databases.interfaces import Record
+from src.students.schemas import StudentCreate
 from src.students.schemas import StudentUpdate
 
 from src.database import database, students
@@ -14,12 +17,29 @@ async def get_students() -> Record | None:
 async def get_student(student_id: int) -> Student | None:
     select_query = students.select().where(students.c.id == student_id)
     result = await database.fetch_one(select_query)
-    if result is None:
-        return None
     return Student(**dict(result))
 
-async def update_student(student_id: int, student: StudentUpdate) -> StudentUpdate | None:
+async def create_student(student: StudentCreate) -> Mapping:
+    insert_query = students.insert().values({
+        "first_name": student.first_name,
+        "last_name": student.last_name,
+        "email": student.email,
+        "profile_picture": student.profile_picture,
+        "sprite": student.sprite,
+        "dob": datetime.strptime(student.dob, '%Y-%m-%d'),
+        "profile_message": student.profile_message,
+        "relationship_level": student.relationship_level,
+        "phone_number": student.phone_number,
+    }).returning(students)
+    results = await database.fetch_one(insert_query)
+    return results
+
+    
+async def update_student(student_id: int, student: StudentUpdate) -> Mapping | None:
     update_query = students.update().where(students.c.id == student_id).values(**student.model_dump(exclude_none=True))
     await database.execute(update_query)
-    return student
+    try:
+        return await get_student(student_id)
+    except:
+        return None
    

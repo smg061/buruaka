@@ -13,8 +13,8 @@ class Student(ORJSONModel):
     relationship_level: int
     
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
         json_encoders = {
             datetime: lambda dt: dt.isoformat(),
         }
@@ -26,10 +26,10 @@ class StudentUpdate(ORJSONModel):
     sprite: Optional[str] = None
     profile_message: Optional[str] = None
     relationship_level: Optional[int] = None
-
+    phone_number: Optional[str] = None
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
         json_encoders = {
             datetime: lambda dt: dt.isoformat(),
         }
@@ -39,13 +39,13 @@ class StudentCreate(ORJSONModel):
     email: str
     profile_picture: str
     sprite: str
-    dob: datetime
+    dob: str
     profile_message: str
     relationship_level: int
-
+    phone_number: str
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
         json_encoders = {
             datetime: lambda dt: dt.isoformat(),
         }
