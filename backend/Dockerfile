@@ -23,4 +23,4 @@ RUN useradd -m -d /src -s /bin/bash app \
 WORKDIR /src
 USER app
 
-CMD ["python", "-m", "main"]
+CMD ["./scripts/start-dev.sh"]

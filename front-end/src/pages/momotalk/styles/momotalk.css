@@ -5,7 +5,10 @@
 .trapezoid {
   /* clip-path: polygon(8.3% 0%, 100% 0%, 91.6% 99.5%, 0% 100%);
     --webkit-clip-path : polygon(8.3% 0%, 100% 0%, 91.6% 99.5%, 0% 100%); */
-  transform: skew(-15deg);
+  transform: skew(-10deg);
+  -webkit-transform: skew(-10deg);
+  -moz-transform: skew(-10deg);
+  border-radius: 2px;
 }
 
 select {
@@ -24,4 +27,23 @@ select {
   outline-offset: -5px;
   border-radius: 0px !important;
   -webkit-border-radius: 0px !important;
+}
+
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.bubble-tail-left::before {
+  @apply absolute -left-1.5 top-1.5 block h-4 w-4 rotate-45 -scale-50 transform bg-slate-700 content-[''];
+}
+
+.bubble-tail-right::before {
+  @apply absolute -right-1.5 top-1.5 block h-4 w-4 -rotate-45 -scale-50 transform bg-blue-500 content-[''];
 }

@@ -11,12 +11,12 @@ export default function Navbar() {
           </svg>
         </button>
         <div className="ml-4">
-          <Button>
+          <Button  color="purple-500">
             <Link to="/">Home</Link>
           </Button>
         </div>
         <div className="ml-4">
-          <Button>
+          <Button color="momo">
             <Link to="/login">Login</Link>
           </Button>
         </div>

@@ -22,6 +22,15 @@ class Messages(ORJSONModel):
 class StudentMessageCreate(ORJSONModel):
     message: str
     student_id: int
+    message_type: str = "text"
+    is_read: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+class StudentMessageCount(ORJSONModel):
+    count: int
 
     class Config:
         from_attributes = True

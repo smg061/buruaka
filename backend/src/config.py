@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1"
 
     class Config:
-        env_file = ".env"
+        # env_file = ".env"
         extra = "ignore"
 
     @root_validator(skip_on_failure=True)
@@ -58,5 +58,5 @@ app_configs: dict[str, Any] = {
 if settings.ENVIRONMENT.is_deployed:
     app_configs["root_path"] = f"v/{settings.APP_VERSION}"
 
-# if not settings.ENVIRONMENT.is_debug:
-#     app_configs["openapi_url"] = None  # hide docs
+if not settings.ENVIRONMENT.is_debug:
+    app_configs["openapi_url"] = None  # hide docs

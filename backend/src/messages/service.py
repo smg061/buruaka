@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Mapping
 
 from databases.interfaces import Record
-from sqlalchemy import insert, select
+from sqlalchemy import func, insert, select
 
 from src.database import database, student_messages, students
 from src.messages.schemas import StudentMessageCreate
@@ -35,16 +35,28 @@ async def create_student_message(data: StudentMessageCreate) -> list[Mapping] | 
             message=data.message,
             student_id=data.student_id,
             created_at=datetime.utcnow(),
+            message_type=data.message_type,
+            is_read=data.is_read,
         )
         .returning(student_messages)
     )
     return await database.fetch_one(insert_query)
 
-async def get_unread_message_count() -> int:
-    query_raw = """
-    SELECT count(*) as count
-    FROM student_messages
-    WHERE read = false
-    """
-    result = await database.fetch_one(query_raw, values={"id": id})
-    return result["count"]
+
+async def get_unread_message_count() -> Mapping | None:
+    select_query = select(func.count(student_messages.c.id)).where(
+        student_messages.c.is_read == False  # noqa
+    )
+    result = await database.execute(select_query)
+    return {
+        "count": result,
+    }
+
+
+async def get_all_unread_messages() -> list[Mapping] | None:
+    select_query = select(student_messages).where(
+        student_messages.c.is_read == False  # noqa
+    ).group_by(student_messages.c.student_id)
+    
+    result = await database.fetch_all(select_query)
+    return result

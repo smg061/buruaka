@@ -1,18 +1,65 @@
-export default function Chat() {
+import {api, type Message, type Student} from '@/utils/api';
+import {useQuery} from '@tanstack/react-query';
+
+type Props = {
+  student: Student;
+  messages: Message[];
+};
+function ChatContainer(props: {children?: React.ReactNode}) {
   return (
-    <div className="flex h-[95%] w-[95%] flex-col rounded-br-md rounded-tr-md bg-white" style={{boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.25)'}}>
-      <div className="flex h-[10%] flex-row items-center justify-between px-4">
-        <p className="text-text-primary text-lg font-semibold">Chat</p>
-        <div className="flex flex-row items-center justify-between"></div>
-      </div>
-      <div className="flex h-[80%] w-full flex-col">
-        <div className="flex h-[90%] w-full flex-col overflow-y-scroll">
-          <div className="flex h-[10%] w-full flex-col"></div>
-          <div className="flex h-[90%] w-full flex-col"></div>
-        </div>
-        <div className="flex h-[10%] w-full flex-row"></div>
-      </div>
-      <div className="flex h-[10%] flex-row items-center justify-between px-4"></div>
+    <div className="h-full overflow-y-auto rounded-md border p-4" style={{boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.25)'}}>
+      {props.children}
     </div>
+  );
+}
+
+interface ChatBubbleProps {
+  from?: string;
+  message: string;
+  profile_picture: string | undefined;
+  isFromCurrentUser?: boolean;
+}
+
+const ChatBubble = ({from, message, profile_picture, isFromCurrentUser}: ChatBubbleProps) => {
+  return (
+    <>
+      <div className={`flex ${isFromCurrentUser ? 'flex-row-reverse' : 'flex-row'} mb-2`}>
+        {profile_picture && <img src={profile_picture} alt="User Profile" className="ml-2 mr-2 h-12 w-12 self-center rounded-full" />}
+        <div>
+          {from !== undefined && <p className="text-sm">{from}</p>}
+          <div
+            className={`relative flex text-center justify-start rounded-md p-3 min-w-[4rem] ${
+              isFromCurrentUser ? 'bubble-tail-right bg-blue-500 text-white' : 'bubble-tail-left bg-slate-700  text-white'
+            }`}>
+            <p className='w-full'>{message}</p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default function Chat(props: Props) {
+  const {student} = props;
+  const {data: messages} = useQuery({
+    queryKey: ['messages', student.id],
+    queryFn: () => api.getStudentMessages(student.id),
+    enabled: !!student.id,
+    staleTime: 1000 * 60,
+    // initialData: [],
+  });
+  if (!messages) return <ChatContainer />;
+  return (
+    <ChatContainer>
+      {(messages ?? []).map(message => (
+        <ChatBubble
+          key={message.created_at}
+          message={message.message}
+          profile_picture={message.sender === 'sensei' ? undefined: student.profile_picture}
+          isFromCurrentUser={message.sender === 'sensei'}
+          from={message.sender === 'sensei' ? undefined : student.first_name}
+        />
+      ))}
+    </ChatContainer>
   );
 }

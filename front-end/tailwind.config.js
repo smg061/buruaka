@@ -2,12 +2,16 @@
 export default {
   darkMode: ['class'],
   content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
+  // plugins: [require('daisyui')],
   theme: {
     container: {
       center: true,
       padding: '2rem',
       screens: {
-        '2xl': '1400px',
+        '2xl': '1000px',
+        md: '768px',
+        sm: '640px',
+        xs: '480px',
       },
     },
     extend: {
@@ -20,8 +24,8 @@ export default {
         momo: '#FB94A7',
         'momo-dark': '#F76D8A',
         sidebar: '#4D5B71',
-        "text-primary": "hsl(var(--text-primary))",
-        "text-secondary": "hsl(var(--text-secondary))",
+        'text-primary': 'hsl(var(--text-primary))',
+        'text-secondary': 'hsl(var(--text-secondary))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -72,5 +76,4 @@ export default {
       },
     },
   },
-  plugins: [],
 };

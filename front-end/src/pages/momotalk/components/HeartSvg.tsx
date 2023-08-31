@@ -1,7 +1,7 @@
 export default function HeartSvg({level, textSize}: {level: number; textSize: 'xs' | 'sm' | 'md' | 'lg' | 'xl'}) {
   return (
     <div className="relative  m-0  flex h-full w-full items-center justify-center p-0">
-      <p className={`text-stroke absolute text-slate-700  text-${textSize}`}>{level}</p>
+      <p className={`text-stroke absolute font-semibold text-slate-700  text-${textSize}`}>{level}</p>
       <svg id="heart-svg" viewBox="467 392 58 57" xmlns="http://www.w3.org/2000/svg" className={'fill-momo text-momo'}>
         <g id="Group" fill="none" fillRule="evenodd" transform="translate(467 392)" className="">
           <path
