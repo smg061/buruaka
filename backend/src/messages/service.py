@@ -4,7 +4,11 @@ from typing import Mapping
 from databases.interfaces import Record
 from sqlalchemy import func, insert, select
 
-from src.database import database, student_messages, students
+from src.database import (
+    database,
+    StudentMessage as student_messages,
+    Student as students,
+)
 from src.messages.schemas import StudentMessageCreate
 
 
@@ -23,7 +27,7 @@ async def get_student_messages(id: int, limit: int = 10) -> list[Mapping]:
 
 
 async def get_student_by_id(id: int) -> Record | None:
-    select_query = select(students).where(students.c.id == id)
+    select_query = select(students).where(students.id == id)
     result = await database.fetch_one(select_query)
     return result
 
@@ -44,8 +48,8 @@ async def create_student_message(data: StudentMessageCreate) -> list[Mapping] | 
 
 
 async def get_unread_message_count() -> Mapping | None:
-    select_query = select(func.count(student_messages.c.id)).where(
-        student_messages.c.is_read == False  # noqa
+    select_query = select(func.count(student_messages.id)).where(
+        student_messages.is_read == False  # noqa
     )
     result = await database.execute(select_query)
     return {
@@ -54,9 +58,11 @@ async def get_unread_message_count() -> Mapping | None:
 
 
 async def get_all_unread_messages() -> list[Mapping] | None:
-    select_query = select(student_messages).where(
-        student_messages.c.is_read == False  # noqa
-    ).group_by(student_messages.c.student_id)
-    
+    select_query = (
+        select(student_messages)
+        .where(student_messages.is_read == False)  # noqa
+        .group_by(student_messages.student_id)
+    )
+
     result = await database.fetch_all(select_query)
     return result

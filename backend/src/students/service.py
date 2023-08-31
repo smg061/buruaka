@@ -3,7 +3,11 @@ from typing import Mapping
 
 from databases.interfaces import Record
 
-from src.database import database, student_messages, students
+from src.database import (
+    database,
+    StudentMessage as student_messages,
+    Student as students,
+)
 from src.students.schemas import Student, StudentCreate, StudentUpdate
 
 
@@ -31,15 +35,14 @@ async def get_students() -> Record | None:
 
     result = await database.fetch_all(raw_query)
     rows = [dict(row) for row in result]
-    print(rows)
     return [Student(**row) for row in rows]
 
 
 async def get_student(student_id: int) -> Student | None:
     select_query = (
         students.select()
-        .where(students.c.id == student_id)
-        .join(student_messages, students.c.id == student_messages.c.student_id)
+        .where(students.id == student_id)
+        .join(student_messages, students.id == student_messages.student_id)
     )
     result = await database.fetch_one(select_query)
     return Student(**dict(result))
@@ -95,7 +98,7 @@ async def create_student(student: StudentCreate) -> Mapping:
 async def update_student(student_id: int, student: StudentUpdate) -> Mapping | None:
     update_query = (
         students.update()
-        .where(students.c.id == student_id)
+        .where(students.id == student_id)
         .values(**student.model_dump(exclude_none=True))
     )
     await database.execute(update_query)
