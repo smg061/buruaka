@@ -47,3 +47,7 @@ select {
 .bubble-tail-right::before {
   @apply absolute -right-1.5 top-1.5 block h-4 w-4 -rotate-45 -scale-50 transform bg-blue-500 content-[''];
 }
+
+.button-corner::before {
+  @apply  absolute -left-1.5 -top-1 block h-4 w-4 -rotate-90 -scale-50 transform bg-slate-700 content-[''];
+}

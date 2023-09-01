@@ -8,6 +8,7 @@ import {ArrowDownWideNarrow, ArrowUpWideNarrow, Apple} from 'lucide-react';
 import UserIcon from './components/UserIcon';
 import UnreadMessagedIcon, {UnreadMessageIconSquare} from './components/UnreadMessagesIcon';
 import Chat from './components/Chat';
+import TrapezoidButton from './components/TrapezoidButton';
 
 function FilterAscDescIcon({order}: {order: Order}) {
   const Icon = () => {
@@ -193,10 +194,11 @@ const Details = ({
             <div className="flex p-2">
               <p className="w-full text-lg font-semibold text-slate-800">{`Student (${students.length})`}</p>
               <div className="relative flex w-full">
-                <div className="border-1 trapezoid absolute h-full w-full border-black bg-slate-500"></div>
-                <button className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
+                <div className="border-1 bg-secondary trapezoid absolute h-full w-full border-black bg-slate-500"></div>
+                <TrapezoidButton variant='secondary' className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
+                  <TrapezoidButton.Corner/>
                   <div className="w-full"> {currentFilter?.label || ''} </div>
-                </button>
+                </TrapezoidButton>
               </div>
               <button
                 className="w-1/2 px-2"
