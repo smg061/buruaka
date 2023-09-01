@@ -15,7 +15,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
-
 from src.config import settings
 from src.constants import DB_NAMING_CONVENTION
 
@@ -92,8 +91,6 @@ class StudentMessage(Base):
         ForeignKey("students.id", ondelete="CASCADE"), index=True, nullable=False
     )
     message = Column(String, nullable=False)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime, onupdate=func.now())
     is_read = Column(Boolean, server_default="false", default=False, nullable=False)
     message_type = Column(
         Enum("text", "picture", name="message_type"),
@@ -101,3 +98,5 @@ class StudentMessage(Base):
         server_default="text",
         default="text",
     )
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, onupdate=func.now())

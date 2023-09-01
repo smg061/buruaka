@@ -27,7 +27,6 @@ async def get_students() -> Record | None:
             FROM student_messages
             WHERE is_read = false
             ORDER BY created_at
-            LIMIT 5
         ) as it
         ON it.student_id = student.id
         GROUP BY student.id

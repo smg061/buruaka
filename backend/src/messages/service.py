@@ -66,3 +66,12 @@ async def get_all_unread_messages() -> list[Mapping] | None:
 
     result = await database.fetch_all(select_query)
     return result
+
+
+async def mark_as_read(message_ids: list[int]) -> None:
+    update_query = (
+        student_messages.update()
+        .where(student_messages.id.in_(message_ids))
+        .values(is_read=True)
+    )
+    await database.execute(update_query)
