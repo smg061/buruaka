@@ -6,7 +6,7 @@ export default function UnreadMessagedIcon({count}: {count: number}) {
       <div className=" absolute left-5 top-3 z-10 flex h-3 w-4 items-center justify-center rounded-sm bg-red-500 p-1 text-xs font-bold text-white">
         <p className="text-center">{count}</p>
       </div>
-      <MessageSquare className="relative h-1/2 w-full fill-white stroke-white" />
+      <MessageSquare className="relative h-1/2 w-full fill-white stroke-white " />
     </div>
   );
 }

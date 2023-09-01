@@ -90,9 +90,7 @@ const Details = ({
   setCurrentStudent: (student: Student) => void;
   unreadMessages: number;
 }) => {
-  const {data: students, isLoading} = useQuery(['students'], () => api.getAllStudents(), {
-    staleTime: 1000 * 60 * 5,
-  });
+  const {data: students, isLoading} = useQuery(['students'], () => api.getAllStudents(), {});
 
   const [orderBy, setOrderBy] = useState<OrderBy>('name');
   const [order, setOrder] = useState<Order>('asc');
@@ -213,7 +211,7 @@ const Details = ({
               ))}
             </div>
           </div>
-          <div className="w-[53%] flex-col rounded-sm bg-white  shadow-md ">
+          <div className="w-[53%] flex-col rounded-sm bg-white">
             {currentStudent ? <Chat student={currentStudent} messages={[]} /> : <div className="w-full">Select a student</div>}
           </div>
         </>
