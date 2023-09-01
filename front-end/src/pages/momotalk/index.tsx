@@ -79,21 +79,91 @@ type Tab = 'students' | 'chat';
 type OrderBy = 'name' | 'relationship_level' | 'last_message';
 type Order = 'asc' | 'desc';
 
+type FilterDialogProps = {
+  options: {
+    label: string;
+    value: string;
+  }[];
+  onChange: (value: string) => void;
+
+  currentOption: {
+    label: string;
+    value: string;
+  };
+};
+
+const filterDialogOptionsStudents = [
+  {
+    label: 'Name',
+    value: 'name',
+  },
+  {
+    label: 'Relationship',
+    value: 'relationship_level',
+  },
+];
+
+const filterDialogOptionsChat = [
+  {
+    label: 'Unread',
+    value: 'unread',
+  },
+  {
+    label: 'Last Message',
+    value: 'last_message',
+  },
+];
+
+function FilterDialog({options, onChange, currentOption}: FilterDialogProps) {
+  const [optionLocal, setOptionLocal] = useState(currentOption);
+
+  return (
+    <div className="animate-slide-down flex w-full flex-col rounded-sm border border-slate-300 opacity-0 ">
+      <div>Sort</div>
+      {options.map(option => (
+        <button
+          className={`flex w-full items-center p-2 ${optionLocal.value === option.value ? 'bg-momo text-white' : ''}`}
+          onClick={() => {
+            setOptionLocal(option);
+          }}>
+          <p className="w-full text-lg font-semibold">{option.label}</p>
+        </button>
+      ))}
+      <div className="flex w-full items-center p-2 ">
+        <button
+          className="flex w-full items-center rounded-sm border border-slate-300 text-slate-700 "
+          onClick={() => {
+            onChange(optionLocal.value);
+          }}>
+          <p className="w-full text-lg font-semibold">Confirm</p>
+        </button>
+      </div>
+    </div>
+  );
+}
 const Details = ({
   mode,
   currentStudent,
   setCurrentStudent,
   unreadMessages,
+  showFilterDialog,
+  setShowFilterDialog,
 }: {
   mode: 'students' | 'chat';
   currentStudent: Student | null;
   setCurrentStudent: (student: Student) => void;
   unreadMessages: number;
+  showFilterDialog: boolean;
+  setShowFilterDialog: (value: boolean) => void;
 }) => {
   const {data: students, isLoading} = useQuery(['students'], () => api.getAllStudents(), {});
 
   const [orderBy, setOrderBy] = useState<OrderBy>('name');
   const [order, setOrder] = useState<Order>('asc');
+
+  const currentFilterItems = mode === 'students' ? filterDialogOptionsStudents : filterDialogOptionsChat;
+
+  const currentFilter = currentFilterItems.find(item => item.value === orderBy) || currentFilterItems[0];
 
   if (isLoading || !students) {
     return <></>;
@@ -124,11 +194,9 @@ const Details = ({
               <p className="w-full text-lg font-semibold text-slate-800">{`Student (${students.length})`}</p>
               <div className="relative flex w-full">
                 <div className="border-1 trapezoid absolute h-full w-full border-black bg-slate-500"></div>
-                <select className="z-1 relative px-1" onChange={e => setOrderBy(e.target.value as OrderBy)}>
-                  <div className=""> {orderBy} </div>
-                  <option value="name">Name</option>
-                  <option value="relationship_level">Relationship</option>
-                </select>
+                <button className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
+                  <div className="w-full"> {currentFilter?.label || ''} </div>
+                </button>
               </div>
               <button
                 className="w-1/2 px-2"
@@ -142,9 +210,30 @@ const Details = ({
                 <FilterAscDescIcon order={order} />
               </button>
             </div>
-            <div className="flex w-full items-center p-1 text-center ">
+            <div className="relative flex w-full items-center p-1 text-center ">
               <div className="pr-1 text-center font-bold text-blue-400">|</div>
               <p>All students</p>
+              {showFilterDialog && (
+                <div className="absolute left-0 top-0 z-10  w-full bg-white ">
+                  <FilterDialog
+                    options={[
+                      {
+                        label: 'Name',
+                        value: 'name',
+                      },
+                      {
+                        label: 'Relationship',
+                        value: 'relationship_level',
+                      },
+                    ]}
+                    onChange={value => {
+                      setOrderBy(value as OrderBy);
+                      setShowFilterDialog(false);
+                    }}
+                    currentOption={currentFilter}
+                  />
+                </div>
+              )}
             </div>
             <div className="scrollbar-hide overflow-y-scroll  ">
               {orderedStudents.map(student => (
@@ -173,13 +262,11 @@ const Details = ({
                 <p className="text-md font-semibold text-slate-800">{`Unread Messages (${unreadMessages})`}</p>
               </div>
               <div className="flex w-1/2">
-                <div className="relative flex ">
+                <div className="relative flex w-full">
                   <div className="border-1 trapezoid absolute h-full w-full border-black bg-slate-500"></div>
-                  <select className="z-1 relative px-1">
-                    {/* <option value="relationship_level">Relationship</option> */}
-                    <option value="name">Unread</option>
-                  </select>
-                  d
+                  <button className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
+                    <div className=""> {currentFilter?.label || ''} </div>
+                  </button>
                 </div>
                 <button
                   className="px-2"
@@ -225,21 +312,34 @@ export default function Momotalk() {
 
   const [currentTab, setCurrentTab] = useState<Tab>('students');
 
+  const [showFilterDialog, setShowFilterDialog] = useState(false);
+
+  const onTabChange = (tab: Tab) => {
+    setCurrentTab(tab);
+    setShowFilterDialog(false);
+  };
   return (
     <MomotalkContainer>
       <div className="w-[7%] rounded-bl-md bg-sidebar">
         <div className={`flex h-16 w-full  justify-center ${currentTab === 'students' ? 'bg-slate-500' : 'opacity-60'}`}>
-          <button onClick={() => setCurrentTab('students')}>
+          <button onClick={() => onTabChange('students')}>
             <UserIcon className="h-3/5 w-full fill-white stroke-white" />
           </button>
         </div>
         <div className={`flex h-16 w-full justify-center ${currentTab === 'chat' ? 'bg-slate-500' : ' opacity-60'}`}>
-          <button className="m-0 p-0" onClick={() => setCurrentTab('chat')}>
+          <button className="m-0 p-0" onClick={() => onTabChange('chat')}>
             <UnreadMessagedIcon count={unreadMessages?.count ?? 0} />
           </button>
         </div>
       </div>
-      <Details unreadMessages={unreadMessages?.count ?? 0} currentStudent={currentStudent} setCurrentStudent={setCurrentStudent} mode={currentTab} />
+      <Details
+        showFilterDialog={showFilterDialog}
+        setShowFilterDialog={setShowFilterDialog}
+        unreadMessages={unreadMessages?.count ?? 0}
+        currentStudent={currentStudent}
+        setCurrentStudent={setCurrentStudent}
+        mode={currentTab}
+      />
     </MomotalkContainer>
   );
 }

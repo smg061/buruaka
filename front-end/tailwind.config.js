@@ -2,7 +2,7 @@
 export default {
   darkMode: ['class'],
   content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
-  // plugins: [require('daisyui')],
+  plugins: [require('tailwindcss-animate')],
   theme: {
     container: {
       center: true,
@@ -69,10 +69,20 @@ export default {
           from: {height: 'var(--radix-accordion-content-height)'},
           to: {height: 0},
         },
+        'slide-in': {
+          '0%': {opacity: 0, transform: 'translateX(100%)'},
+          '100%': {opacity: 1, transform: 'translateX(0)'},
+        },
+        'slide-down': {
+          '0%': {opacity: 0, transform: 'scale(0.5)', width: '0px'},
+          '100%': {opacity: 1, transform: ' scale(1)', width: '100%'},
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'slide-in': 'slide-in .25s ease-in-out forwards 0.1s',
+        'slide-down': 'slide-down .20s ease-in-out forwards 0.05s',
       },
     },
   },
