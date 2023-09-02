@@ -119,7 +119,7 @@ function FilterDialog({options, onChange, currentOption}: FilterDialogProps) {
   const [optionLocal, setOptionLocal] = useState(currentOption);
 
   return (
-    <div className="animate-slide-down flex w-full flex-col rounded-sm border border-slate-300 opacity-0 ">
+    <div className="flex w-full animate-slide-down flex-col rounded-sm border border-slate-300 opacity-0 ">
       <div>Sort</div>
       {options.map(option => (
         <button
@@ -194,10 +194,8 @@ const Details = ({
             <div className="flex p-2">
               <p className="w-full text-lg font-semibold text-slate-800">{`Student (${students.length})`}</p>
               <div className="relative flex w-full">
-                <div className="border-1 bg-secondary trapezoid absolute h-full w-full border-black bg-slate-500"></div>
-                <TrapezoidButton variant='secondary' className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
-                  <TrapezoidButton.Corner/>
-                  <div className="w-full"> {currentFilter?.label || ''} </div>
+                <TrapezoidButton variant="secondary" className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
+                  <p className="w-full"> {currentFilter?.label || ''} </p>
                 </TrapezoidButton>
               </div>
               <button
