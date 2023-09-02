@@ -47,7 +47,7 @@ async def create_refresh_token(
     if not refresh_token:
         refresh_token = utils.generate_random_alphanum(64)
 
-    insert_query = refresh_tokens.insert().values(
+    insert_query = insert(refresh_tokens).values(
         uuid=uuid.uuid4(),
         refresh_token=refresh_token,
         expires_at=datetime.utcnow() + timedelta(seconds=auth_config.REFRESH_TOKEN_EXP),

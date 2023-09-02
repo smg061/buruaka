@@ -1,5 +1,5 @@
+const BASE_URL = 'http://localhost:8000';
 const API_URL = 'http://localhost:8000/api/v1';
-
 
 export type Student = {
     id: number;
@@ -33,6 +33,41 @@ export const api = {
     getUnreadMessages: async () => {
         const response = await fetch(`${API_URL}/messages/unread`);
         return await response.json() as {count : number};
+    },
+    login: async (email: string, password: string) => {
+        const response = await fetch(`${BASE_URL}/auth/users/tokens`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email, password})
+        });
+        return await response.json() as {
+            access_token: string;
+            refresh_token: string;
+        };
+    },
+    getUser: async ()=> {
+        const response = await fetch(`${BASE_URL}/auth/users/me`, {
+            method: 'GET',  
+            credentials: 'include'
+        });
+        return await response.json() as {
+            email: string;
+        };
+    },
+    refreshToken: async (refreshToken: string) => {
+        const response = await fetch(`${BASE_URL}/auth/refresh`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({refresh_token: refreshToken})
+        });
+        return await response.json() as {
+            access_token: string;
+            refresh_token: string;
+        };
     }
-
+    
 }
