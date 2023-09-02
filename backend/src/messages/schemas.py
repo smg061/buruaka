@@ -7,6 +7,7 @@ class Message(ORJSONModel):
     message: str
     created_at: datetime
     sender: str
+    message_type: str
 
     class Config:
         from_attributes = True

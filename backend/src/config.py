@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1"
 
     class Config:
-        # env_file = ".env"
+        env_file = ".env"
         extra = "ignore"
 
     @root_validator(skip_on_failure=True)

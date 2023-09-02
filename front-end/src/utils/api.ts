@@ -18,6 +18,8 @@ export type Message = {
     message: string;
     created_at: string;
     sender: 'student' | 'sensei';
+    is_read: boolean;
+    message_type: 'text' | 'picture';
 }
 export const api = {
     getAllStudents: async () => {

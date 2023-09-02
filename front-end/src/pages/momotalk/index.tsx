@@ -10,7 +10,7 @@ import UnreadMessagedIcon, {UnreadMessageIconSquare} from './components/UnreadMe
 import Chat from './components/Chat';
 import TrapezoidButton from './components/TrapezoidButton';
 
-function FilterAscDescIcon({order}: {order: Order}) {
+function FilterIcon({order}: {order: Order}) {
   const Icon = () => {
     const className = 'h-6 w-6 fill-slate-700 stroke-slate-700 stroke-2 relative';
     if (order === 'asc') {
@@ -207,7 +207,7 @@ const Details = ({
                     setOrder('asc');
                   }
                 }}>
-                <FilterAscDescIcon order={order} />
+                <FilterIcon order={order} />
               </button>
             </div>
             <div className="relative flex w-full items-center p-1 text-center ">
@@ -277,7 +277,7 @@ const Details = ({
                       setOrder('asc');
                     }
                   }}>
-                  <FilterAscDescIcon order={order} />
+                  <FilterIcon order={order} />
                 </button>
               </div>
             </div>

@@ -51,8 +51,8 @@ select {
   height: 1rem;
   width: 1rem;
   transform: rotate(45deg) scale(0.5);
-  background: #2d3748;
   content: "";
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
 }
 
 .bubble-tail-right::before {
@@ -63,7 +63,6 @@ select {
   height: 1rem;
   width: 1rem;
   transform: rotate(45deg) scale(0.5);
-  background: #2d3748;
   content: "";
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));

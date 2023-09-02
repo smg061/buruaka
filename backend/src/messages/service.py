@@ -14,11 +14,11 @@ from src.messages.schemas import StudentMessageCreate
 
 async def get_student_messages(id: int, limit: int = 10) -> list[Mapping]:
     query_raw = """
-    SELECT message, created_at, 'student' as sender
+    SELECT message, created_at, message_type, 'student' as sender
     FROM student_messages
     WHERE student_id = :id
     UNION
-    SELECT message, created_at, 'sensei' as sender
+    SELECT message, created_at, 'text' as message_type, 'sensei' as sender
     FROM sensei_messages
     WHERE student_id = :id
     ORDER BY created_at
@@ -52,6 +52,7 @@ async def get_unread_message_count() -> Mapping | None:
         student_messages.is_read == False  # noqa
     )
     result = await database.execute(select_query)
+    
     return {
         "count": result,
     }

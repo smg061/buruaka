@@ -1,6 +1,6 @@
 import {api, type Message, type Student} from '@/utils/api';
 import {useQuery} from '@tanstack/react-query';
-import * as dateFns from 'date-fns';
+import {differenceInSeconds} from 'date-fns';
 
 type Props = {
   student: Student;
@@ -16,25 +16,6 @@ type ChatBubbleProps = {
   profile_picture: string | undefined;
   isFromCurrentUser?: boolean;
 };
-
-// const ChatBubble = ({from, message, profile_picture, isFromCurrentUser}: ChatBubbleProps) => {
-//   return (
-//     <>
-//       <div className={`flex ${isFromCurrentUser ? 'flex-row-reverse' : 'flex-row'} mb-2`}>
-//         {profile_picture && <img src={profile_picture} alt="User Profile" className="ml-2 mr-2 h-12 w-12 self-center rounded-full" />}
-//         <div>
-//           {from !== undefined && <p className="text-sm">{from}</p>}
-//           <div
-//             className={`relative flex min-w-[4rem] justify-start rounded-md p-3 text-center ${
-//               isFromCurrentUser ? 'bubble-tail-right bg-blue-500 text-white' : 'bubble-tail-left bg-slate-700  text-white'
-//             }`}>
-//             <p className="w-full">{message}</p>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
 
 type ChatBubblesGroupProps = Omit<ChatBubbleProps, 'message'> & {
   messages: Message[];
@@ -58,6 +39,29 @@ const getBubbleClassName = (message: Message, index: number) => {
   }
   return base;
 };
+
+function MessageBubbleText({message, from, index}: {message: Message; from: string | undefined; index: number}) {
+  return (
+    <div key={message.created_at}>
+      {from !== undefined && index === 0 && <p className="text-sm">{from}</p>}
+      <div className={getBubbleClassName(message, index)}>
+        <p className="w-full">{message.message}</p>
+      </div>
+    </div>
+  );
+}
+
+function MessageBubbleImage({message, from, index}: {message: Message; from: string | undefined; index: number}) {
+  return (
+    <div key={message.created_at}>
+      {from !== undefined && index === 0 && <p className="text-sm">{from}</p>}
+      <div className={'relative flex min-w-[4rem] justify-start rounded-md py-3 px-1 text-center '}>
+        <img src={message.message} alt="picture message" className="w-3/4  rounded-md border p-3" />
+      </div>
+    </div>
+  );
+}
+
 function ChatBubblesGroup({messages, ...props}: ChatBubblesGroupProps) {
   const {from, profile_picture, isFromCurrentUser} = props;
 
@@ -66,14 +70,16 @@ function ChatBubblesGroup({messages, ...props}: ChatBubblesGroupProps) {
       <div className={`flex ${isFromCurrentUser ? 'flex-row-reverse' : 'flex-row'} mb-2 `}>
         {profile_picture && <img src={profile_picture} alt="User Profile" className="ml-2 mr-2 mt-4 h-12 w-11 self-start rounded-full" />}
         <div className="flex flex-col gap-1">
-          {messages.map((message, idx) => (
-            <div key={message.created_at}>
-              {from !== undefined && idx === 0 && <p className="text-sm">{from}</p>}
-              <div className={getBubbleClassName(message, idx)}>
-                <p className="w-full">{message.message}</p>
-              </div>
-            </div>
-          ))}
+          {messages.map((message, idx) => {
+            switch (message.message_type) {
+              case 'text':
+                return <MessageBubbleText key={message.created_at} message={message} from={from} index={idx} />;
+              case 'picture':
+                return <MessageBubbleImage key={message.created_at} message={message} from={from} index={idx} />;
+              default:
+                throw new Error(`Unknown message type: ${String(message.message_type)}`);
+            }
+          })}
         </div>
       </div>
     </>
@@ -108,7 +114,7 @@ const groupMessages = (messages: Message[]): Message[][] => {
 };
 
 const getTimeDiferenceInMinutes = (date1: Date, date2: Date) => {
-  const diff = dateFns.differenceInSeconds(date1, date2);
+  const diff = differenceInSeconds(date1, date2);
   return diff;
 };
 
@@ -150,6 +156,7 @@ const groupMessagesBySenderAndDate = (messages: Message[], thresholdInSeconds = 
   }
   return result;
 };
+
 export default function Chat(props: Props) {
   const {student} = props;
   const {data: messages} = useQuery({

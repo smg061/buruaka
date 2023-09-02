@@ -91,12 +91,14 @@ class StudentMessage(Base):
         ForeignKey("students.id", ondelete="CASCADE"), index=True, nullable=False
     )
     message = Column(String, nullable=False)
-    is_read = Column(Boolean, server_default="false", default=False, nullable=False)
+    is_read = Column(Boolean, server_default="false",
+                     index=True, default=False, nullable=False)
     message_type = Column(
         Enum("text", "picture", name="message_type"),
         nullable=False,
         server_default="text",
         default="text",
+        index=True,
     )
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, onupdate=func.now())

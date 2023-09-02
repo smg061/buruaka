@@ -13,23 +13,32 @@ from src.students.schemas import Student, StudentCreate, StudentUpdate
 
 async def get_students() -> Record | None:
     raw_query = """
-        SELECT student.id, student.first_name,student.last_name, student.email
-            ,student.profile_picture
-            , student.sprite
-            , student.dob
-            , student.profile_message
-            , student.relationship_level
-            , student.phone_number,
-            array_remove(array_agg(it.message), NULL) as unread_messages
-        FROM students as student
-        LEFT JOIN (
-            SELECT message, student_id, created_at, is_read
-            FROM student_messages
-            WHERE is_read = false
-            ORDER BY created_at
-        ) as it
-        ON it.student_id = student.id
-        GROUP BY student.id
+    SELECT 
+        student.id,
+        student.first_name,
+        student.last_name,
+        student.email,
+        student.profile_picture,
+        student.sprite,
+        student.dob,
+        student.profile_message,
+        student.relationship_level,
+        student.phone_number,
+        array_remove(array_agg(it.message), NULL) as unread_messages
+    FROM students as student
+    LEFT JOIN (
+        SELECT student_id, created_at, is_read, (
+            CASE
+                WHEN message_type = 'text' THEN message
+                ELSE '[image]'
+            END
+        ) as message
+        FROM student_messages
+        WHERE is_read = false
+        ORDER BY created_at
+    ) as it
+    ON it.student_id = student.id
+    GROUP BY student.id
     """
 
     result = await database.fetch_all(raw_query)
