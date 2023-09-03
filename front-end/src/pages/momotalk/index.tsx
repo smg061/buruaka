@@ -1,6 +1,6 @@
 import {useQuery} from '@tanstack/react-query';
 import {type Student, api} from '@/utils/api';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import './styles/momotalk.css';
 import StudentInfo from './components/StudentInfo';
 import HeartSvg from './components/HeartSvg';
@@ -123,6 +123,7 @@ function FilterDialog({options, onChange, currentOption}: FilterDialogProps) {
       <div>Sort</div>
       {options.map(option => (
         <button
+          key={option.value}
           className={`flex w-full items-center p-2 ${optionLocal.value === option.value ? 'bg-momo text-white' : ''}`}
           onClick={() => {
             setOptionLocal(option);
@@ -314,6 +315,13 @@ export default function Momotalk() {
 
   const [showFilterDialog, setShowFilterDialog] = useState(false);
 
+  useEffect(() => {
+    const s = async () => {
+      const p = await api.getUser();
+      console.log(p);
+    };
+    s().catch(e => console.log(e));
+  }, []);
   const onTabChange = (tab: Tab) => {
     setCurrentTab(tab);
     setShowFilterDialog(false);

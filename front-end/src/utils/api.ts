@@ -40,6 +40,7 @@ export const api = {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({email, password})
         });
         return await response.json() as {
@@ -50,7 +51,11 @@ export const api = {
     getUser: async ()=> {
         const response = await fetch(`${BASE_URL}/auth/users/me`, {
             method: 'GET',  
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+
         });
         return await response.json() as {
             email: string;

@@ -11,14 +11,14 @@ export default function Navbar() {
           </svg>
         </button>
         <div className="ml-4">
-          <Button  color="purple-500">
-            <Link to="/">Home</Link>
-          </Button>
+          <Link to="/">
+            <Button color="purple-500">Home</Button>
+          </Link>
         </div>
         <div className="ml-4">
-          <Button color="momo">
-            <Link to="/login">Login</Link>
-          </Button>
+          <Link to="/login">
+            <Button color="purple-500">Login</Button>
+          </Link>
         </div>
       </div>
     </nav>

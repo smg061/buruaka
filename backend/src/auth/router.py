@@ -2,11 +2,13 @@ from databases.interfaces import Record
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, status
 
 from src.auth import jwt, service, utils
-from src.auth.dependencies import (valid_refresh_token,
-                                   valid_refresh_token_user, valid_user_create)
+from src.auth.dependencies import (
+    valid_refresh_token,
+    valid_refresh_token_user,
+    valid_user_create,
+)
 from src.auth.jwt import parse_jwt_user_data
-from src.auth.schemas import (AccessTokenResponse, AuthUser, JWTData,
-                              UserResponse)
+from src.auth.schemas import AccessTokenResponse, AuthUser, JWTData, UserResponse
 
 router = APIRouter()
 
@@ -56,7 +58,10 @@ async def auth_user(auth_data: AuthUser, response: Response) -> AccessTokenRespo
     access_token = jwt.create_access_token(user=user)
     response.set_cookie(**utils.get_refresh_token_settings(refresh_token))
     response.set_cookie(
-        key="access_token", value=f"Bearer {access_token}", httponly=True
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        domain="localhost",
     )
     return AccessTokenResponse(
         access_token=access_token,

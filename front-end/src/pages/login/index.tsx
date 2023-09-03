@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import {api} from '@/utils/api';
+import {useState} from 'react';
 
 export default function Login() {
-  // login form
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -24,9 +24,10 @@ export default function Login() {
           <input className="rounded-lg" type="password" name="password" onChange={handleFormChange} />
           <button
             className="rounded-lg bg-green-500 text-white"
-            onClick={async (e) => {
+            onClick={async e => {
               e.preventDefault();
- 
+              const data = await api.login(form.email, form.password);
+              console.log(data);
             }}>
             Login
           </button>

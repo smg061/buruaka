@@ -27,7 +27,7 @@ class Environment(str, Enum):
 class Settings(BaseSettings):
     DATABASE_URL: PostgresDsn
 
-    SITE_DOMAIN: str = "localhost:5173"
+    SITE_DOMAIN: str = "localhost"
 
     ENVIRONMENT: Environment = Environment.LOCAL
 
