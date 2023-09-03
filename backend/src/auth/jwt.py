@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Any, Optional
 
-from databases.interfaces import Record
 from fastapi import Depends, Request
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security import OAuth2
@@ -44,7 +43,7 @@ oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/auth/users/tokens")
 
 def create_access_token(
     *,
-    user: Record,
+    user: dict[str, Any],
     expires_delta: timedelta = timedelta(minutes=auth_config.JWT_EXP),
 ) -> str:
     jwt_data = {

@@ -1,28 +1,32 @@
-from databases import Database
+from typing import Any
+
 from sqlalchemy import (
     Boolean,
     Column,
+    CursorResult,
     DateTime,
     Enum,
     ForeignKey,
     Identity,
+    Insert,
     Integer,
     LargeBinary,
     MetaData,
+    Select,
     String,
-    create_engine,
+    Update,
     func,
 )
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.asyncio import create_async_engine
+
 from sqlalchemy.ext.declarative import declarative_base
 from src.config import settings
 from src.constants import DB_NAMING_CONVENTION
 
-DATABASE_URL = settings.DATABASE_URL.unicode_string()
-engine = create_engine(DATABASE_URL)
+DATABASE_URL = str(settings.DATABASE_URL)
+engine = create_async_engine(DATABASE_URL)
 metadata = MetaData(naming_convention=DB_NAMING_CONVENTION)
-
-database = Database(DATABASE_URL, force_rollback=settings.ENVIRONMENT.is_testing)
 
 
 Base = declarative_base()
@@ -102,3 +106,72 @@ class StudentMessage(Base):
     )
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, onupdate=func.now())
+
+
+class GroupChat(Base):
+    __tablename__ = "group_chat"
+    id = Column(Integer, Identity(), primary_key=True)
+    name = Column(String, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, onupdate=func.now())
+
+
+class GroupChatMessage(Base):
+    __tablename__ = "group_chat_message"
+    id = Column(Integer, Identity(), primary_key=True)
+    group_chat_id = Column(
+        ForeignKey("group_chat.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    message = Column(String, nullable=False)
+    is_read = Column(Boolean, server_default="false",
+                     index=True, default=False, nullable=False)
+    message_type = Column(
+        Enum("text", "picture", name="message_type"),
+        nullable=False,
+        server_default="text",
+        default="text",
+        index=True,
+    )
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, onupdate=func.now())
+
+
+class GroupChatSenseiMessage():
+    __tablename__ = "group_chat_sensei_message"
+    id = Column(Integer, Identity(), primary_key=True)
+    group_chat_id = Column(
+        ForeignKey("group_chat.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    message = Column(String, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, onupdate=func.now())
+
+
+class GroupChatMember(Base):
+    __tablename__ = "group_chat_member"
+    id = Column(Integer, Identity(), primary_key=True)
+    group_chat_id = Column(
+        ForeignKey("group_chat.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    student_id = Column(
+        ForeignKey("students.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, onupdate=func.now())
+
+
+async def fetch_one(select_query: Select | Insert | Update, values: dict[str, str] = None) -> dict[str, Any] | None:
+    async with engine.begin() as conn:
+        cursor: CursorResult = await conn.execute(select_query, values)
+        return cursor.first()._asdict() if cursor.rowcount > 0 else None
+
+
+async def fetch_all(select_query: Select | Insert | Update, values: dict[str, str]= None) -> list[dict[str, Any]]:
+    async with engine.begin() as conn:
+        cursor: CursorResult = await conn.execute(select_query, values)
+        return [r._asdict() for r in cursor.all()]
+
+
+async def execute(select_query: Insert | Update) -> None:
+    async with engine.begin() as conn:
+        await conn.execute(select_query)

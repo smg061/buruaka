@@ -7,7 +7,6 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.auth.router import router as auth_router
 from src.config import app_configs, settings
-from src.database import database
 from src.messages.router import router as messages_router
 from src.students.router import router as students_router
 
@@ -15,12 +14,8 @@ from src.students.router import router as students_router
 @asynccontextmanager
 async def lifespan(_application: FastAPI) -> AsyncGenerator:
     # Startup
-    await database.connect()
-
     yield
-
     # Shutdown
-    await database.disconnect()
 
 
 app = FastAPI(**app_configs, lifespan=lifespan)

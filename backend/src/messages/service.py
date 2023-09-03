@@ -1,13 +1,15 @@
 from datetime import datetime
-from typing import Mapping
+from typing import Any, Mapping
 
-from databases.interfaces import Record
-from sqlalchemy import func, insert, select
 
+from sqlalchemy import func, insert, select, text
 from src.database import (
-    database,
     StudentMessage as student_messages,
     Student as students,
+    fetch_all,
+    fetch_one,
+    execute
+
 )
 from src.messages.schemas import StudentMessageCreate
 
@@ -23,12 +25,12 @@ async def get_student_messages(id: int, limit: int = 10) -> list[Mapping]:
     WHERE student_id = :id
     ORDER BY created_at
     """
-    return await database.fetch_all(query_raw, values={"id": id})
+    return await fetch_all(text(query_raw), {"id": id})
 
 
-async def get_student_by_id(id: int) -> Record | None:
+async def get_student_by_id(id: int) -> dict[str, Any] | None:
     select_query = select(students).where(students.id == id)
-    result = await database.fetch_one(select_query)
+    result = await fetch_one(text(select_query))
     return result
 
 
@@ -44,17 +46,17 @@ async def create_student_message(data: StudentMessageCreate) -> list[Mapping] | 
         )
         .returning(student_messages)
     )
-    return await database.fetch_one(insert_query)
+    return await fetch_one(insert_query)
 
 
 async def get_unread_message_count() -> Mapping | None:
-    select_query = select(func.count(student_messages.id)).where(
+    select_query = select(func.count(student_messages.id).label('count')).where(
         student_messages.is_read == False  # noqa
     )
-    result = await database.execute(select_query)
-    
+    result = await fetch_one(select_query)
+
     return {
-        "count": result,
+        "count": result['count'],
     }
 
 
@@ -65,7 +67,7 @@ async def get_all_unread_messages() -> list[Mapping] | None:
         .group_by(student_messages.student_id)
     )
 
-    result = await database.fetch_all(select_query)
+    result = await fetch_all(select_query)
     return result
 
 
@@ -75,4 +77,4 @@ async def mark_as_read(message_ids: list[int]) -> None:
         .where(student_messages.id.in_(message_ids))
         .values(is_read=True)
     )
-    await database.execute(update_query)
+    await execute(update_query)
