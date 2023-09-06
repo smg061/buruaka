@@ -4,6 +4,7 @@ from src.models import ORJSONModel
 
 
 class Message(ORJSONModel):
+    id: int
     message: str
     created_at: datetime
     sender: str
@@ -32,6 +33,12 @@ class StudentMessageCreate(ORJSONModel):
 
 class StudentMessageCount(ORJSONModel):
     count: int
+
+    class Config:
+        from_attributes = True
+        
+class MarkMessagesRead(ORJSONModel):
+    message_ids: list[int]
 
     class Config:
         from_attributes = True

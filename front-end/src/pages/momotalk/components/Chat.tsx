@@ -1,13 +1,14 @@
 import {api, type Message, type Student} from '@/utils/api';
-import {useQuery} from '@tanstack/react-query';
+import {useQuery, useMutation} from '@tanstack/react-query';
 import {differenceInSeconds} from 'date-fns';
+import {useEffect} from 'react';
 
 type Props = {
   student: Student;
   messages: Message[];
 };
 function ChatContainer(props: {children?: React.ReactNode}) {
-  return <div className="h-full overflow-y-auto rounded-md border p-4">{props.children}</div>;
+  return <div className="flex h-full flex-col overflow-y-auto rounded-md border p-4">{props.children}</div>;
 }
 
 type ChatBubbleProps = {
@@ -55,7 +56,7 @@ function MessageBubbleImage({message, from, index}: {message: Message; from: str
   return (
     <div key={message.created_at}>
       {from !== undefined && index === 0 && <p className="text-sm">{from}</p>}
-      <div className={'relative flex min-w-[4rem] justify-start rounded-md py-3 px-1 text-center '}>
+      <div className={'relative flex min-w-[4rem] justify-start rounded-md px-1 py-3 text-center '}>
         <img src={message.message} alt="picture message" className="w-3/4  rounded-md border p-3" />
       </div>
     </div>
@@ -165,6 +166,21 @@ export default function Chat(props: Props) {
     enabled: !!student.id,
     staleTime: 1000 * 60,
   });
+  const markAsRead = useMutation(api.markAsRead, {
+    onSuccess: () => {
+      console.log('Marked as read');
+    },
+  });
+
+  useEffect(() => {
+    if (!messages) return;
+    const studentMessages = messages.filter(message => message.sender === 'student').map(message => message.id);
+    console.log(studentMessages);
+    if (studentMessages.length > 0) {
+      markAsRead.mutate(studentMessages);
+    }
+  }, [messages]);
+
   if (!messages) return <ChatContainer />;
 
   const groupedMessages = groupMessagesBySenderAndDate(messages);
@@ -179,6 +195,9 @@ export default function Chat(props: Props) {
           from={group[0].sender === 'sensei' ? undefined : student.first_name}
         />
       ))}
+      <div className=" justify-self-end">
+        <input type="text" className="w-full rounded-md border p-4" />
+      </div>
     </ChatContainer>
   );
 }

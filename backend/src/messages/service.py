@@ -1,26 +1,21 @@
 from datetime import datetime
 from typing import Any, Mapping
 
+from sqlalchemy import func, insert, select, text, update
 
-from sqlalchemy import func, insert, select, text
-from src.database import (
-    StudentMessage as student_messages,
-    Student as students,
-    fetch_all,
-    fetch_one,
-    execute
-
-)
-from src.messages.schemas import StudentMessageCreate
+from src.database import Student as students
+from src.database import StudentMessage as student_messages
+from src.database import execute, fetch_all, fetch_one
+from src.messages.schemas import StudentMessageCreate, MarkMessagesRead
 
 
 async def get_student_messages(id: int, limit: int = 10) -> list[Mapping]:
     query_raw = """
-    SELECT message, created_at, message_type, 'student' as sender
+    SELECT id, message, created_at, message_type, 'student' as sender
     FROM student_messages
     WHERE student_id = :id
     UNION
-    SELECT message, created_at, 'text' as message_type, 'sensei' as sender
+    SELECT id, message, created_at, 'text' as message_type, 'sensei' as sender
     FROM sensei_messages
     WHERE student_id = :id
     ORDER BY created_at
@@ -30,7 +25,7 @@ async def get_student_messages(id: int, limit: int = 10) -> list[Mapping]:
 
 async def get_student_by_id(id: int) -> dict[str, Any] | None:
     select_query = select(students).where(students.id == id)
-    result = await fetch_one(text(select_query))
+    result = await fetch_one(select_query)
     return result
 
 
@@ -50,13 +45,13 @@ async def create_student_message(data: StudentMessageCreate) -> list[Mapping] | 
 
 
 async def get_unread_message_count() -> Mapping | None:
-    select_query = select(func.count(student_messages.id).label('count')).where(
+    select_query = select(func.count(student_messages.id).label("count")).where(
         student_messages.is_read == False  # noqa
     )
     result = await fetch_one(select_query)
 
     return {
-        "count": result['count'],
+        "count": result["count"],
     }
 
 
@@ -71,10 +66,11 @@ async def get_all_unread_messages() -> list[Mapping] | None:
     return result
 
 
-async def mark_as_read(message_ids: list[int]) -> None:
+async def mark_as_read(messages: MarkMessagesRead) -> None:
     update_query = (
-        student_messages.update()
-        .where(student_messages.id.in_(message_ids))
+        update(student_messages)
+        .where(student_messages.id.in_(messages.message_ids))
+        .where(student_messages.is_read == False) # noqa
         .values(is_read=True)
     )
     await execute(update_query)

@@ -61,6 +61,19 @@ export const api = {
             email: string;
         };
     },
+
+    markAsRead: async (messageIds: number[]) => {
+        const response = await fetch(`${API_URL}/messages/mark-read`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({message_ids: messageIds})
+        });
+        return await response.json() as {
+            message: string;
+        };
+    },
     refreshToken: async (refreshToken: string) => {
         const response = await fetch(`${BASE_URL}/auth/refresh`, {
             method: 'POST',

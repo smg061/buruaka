@@ -1,16 +1,18 @@
-from typing import Any
 import uuid
 from datetime import datetime, timedelta
+from typing import Any
 
 from pydantic import UUID4
-from sqlalchemy import insert, select, text
+from sqlalchemy import insert, select
 
 from src import utils
 from src.auth.config import auth_config
 from src.auth.exceptions import InvalidCredentials
 from src.auth.schemas import AuthUser
 from src.auth.security import check_password, hash_password
-from src.database import AuthUser as auth_user, RefreshToken as refresh_tokens, fetch_one, execute
+from src.database import AuthUser as auth_user
+from src.database import RefreshToken as refresh_tokens
+from src.database import execute, fetch_one
 
 
 async def create_user(user: AuthUser) -> dict[str, Any] | None:

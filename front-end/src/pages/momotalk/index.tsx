@@ -143,7 +143,7 @@ function FilterDialog({options, onChange, currentOption}: FilterDialogProps) {
     </div>
   );
 }
-const Details = ({
+const  Details = ({
   mode,
   currentStudent,
   setCurrentStudent,
@@ -330,14 +330,14 @@ export default function Momotalk() {
     <MomotalkContainer>
       <div className="w-[7%] rounded-bl-md bg-sidebar">
         <div className={`flex h-16 w-full  justify-center ${currentTab === 'students' ? 'bg-slate-500' : 'opacity-60'}`}>
-          <button onClick={() => onTabChange('students')}>
+          <div className='w-full px-2' onClick={() => onTabChange('students')}>
             <UserIcon className="h-3/5 w-full fill-white stroke-white" />
-          </button>
+          </div>
         </div>
         <div className={`flex h-16 w-full justify-center ${currentTab === 'chat' ? 'bg-slate-500' : ' opacity-60'}`}>
-          <button className="m-0 p-0" onClick={() => onTabChange('chat')}>
+          <div className="w-full px-2" onClick={() => onTabChange('chat')}>
             <UnreadMessagedIcon count={unreadMessages?.count ?? 0} />
-          </button>
+          </div>
         </div>
       </div>
       <Details

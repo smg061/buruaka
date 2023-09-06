@@ -16,11 +16,13 @@ def convert_datetime_to_gmt(dt: datetime) -> str:
 
     return dt.strftime("%Y-%m-%dT%H:%M:%S%z")
 
+
 class CustomModel(BaseModel):
     model_config = ConfigDict(
         json_encoders={datetime: convert_datetime_to_gmt},
         populate_by_name=True,
     )
+
     @model_validator(mode="before")
     @classmethod
     def set_null_microseconds(cls, data: dict[str, Any]) -> dict[str, Any]:
@@ -31,6 +33,7 @@ class CustomModel(BaseModel):
         }
 
         return {**data, **datetime_fields}
+
 
 class ORJSONModel(BaseModel):
     class Config:

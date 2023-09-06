@@ -1,15 +1,11 @@
 from datetime import datetime
-from typing import Mapping, Any
+from typing import Any, Mapping
 
-
-from src.database import (
-    StudentMessage as student_messages,
-    Student as students,
-    fetch_all,
-    fetch_one,
-    execute,
-)
 from sqlalchemy import text
+
+from src.database import Student as students
+from src.database import StudentMessage as student_messages
+from src.database import execute, fetch_all, fetch_one
 from src.students.schemas import Student, StudentCreate, StudentUpdate
 
 

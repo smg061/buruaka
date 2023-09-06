@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Any
+
 from fastapi import Cookie, Depends
 
 from src.auth import service
