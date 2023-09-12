@@ -5,22 +5,24 @@ from sqlalchemy import func, insert, select, text, update
 
 from src.database import Student as students
 from src.database import StudentMessage as student_messages
-from src.database import execute, fetch_all, fetch_one
+from src.database import execute, fetch_all, fetch_raw_all, fetch_one
 from src.messages.schemas import StudentMessageCreate, MarkMessagesRead
 
 
 async def get_student_messages(id: int, limit: int = 10) -> list[Mapping]:
     query_raw = """
-    SELECT id, message, created_at, message_type, 'student' as sender
+    SELECT id, message, created_at, message_type, 'student' as sender, is_read
     FROM student_messages
     WHERE student_id = :id
     UNION
-    SELECT id, message, created_at, 'text' as message_type, 'sensei' as sender
+    SELECT id, message, created_at, 'text' as message_type, 'sensei' as sender, true as is_read
     FROM sensei_messages
     WHERE student_id = :id
     ORDER BY created_at
+    LIMIT :limit
+    OFFSET :offset
     """
-    return await fetch_all(text(query_raw), {"id": id})
+    return await fetch_raw_all(query_raw, {"id": id, "limit": limit, "offset": 0})
 
 
 async def get_student_by_id(id: int) -> dict[str, Any] | None:

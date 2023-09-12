@@ -11,33 +11,62 @@ from src.students.schemas import Student, StudentCreate, StudentUpdate
 
 async def get_students() -> dict[str, Any] | None:
     raw_query = """
-    SELECT 
-        student.id,
-        student.first_name,
-        student.last_name,
-        student.email,
-        student.profile_picture,
-        student.sprite,
-        student.dob,
-        student.profile_message,
-        student.relationship_level,
-        student.phone_number,
-        array_remove(array_agg(it.message), NULL) as unread_messages
-    FROM students as student
-    LEFT JOIN (
-        SELECT student_id, created_at, is_read, (
-            CASE
-                WHEN message_type = 'text' THEN message
-                ELSE '[image]'
-            END
-        ) as message
-        FROM student_messages
-        WHERE is_read = false
-        ORDER BY created_at
-    ) as it
-    ON it.student_id = student.id
-    GROUP BY student.id
-    """
+WITH last_five_messages AS
+    (SELECT id,
+            student_id,
+            message,
+            created_at,
+            'student' AS sender,
+            message_type,
+            is_read
+    FROM
+        (SELECT id,
+                student_id,
+                (
+                    CASE
+                        WHEN message_type = 'text' THEN message
+                        ELSE '[picture]'
+                    END
+                ) AS message,
+                created_at,
+                message_type,
+                is_read,
+                ROW_NUMBER() OVER(PARTITION BY student_id
+                                ORDER BY created_at DESC) AS rn
+        FROM public.student_messages) sub
+    WHERE sub.rn <= 5
+    UNION ALL SELECT    id,
+                        student_id,
+                        message,
+                        created_at,
+                        'sensei' AS sender,
+                        'text' AS message_type,
+                        true as is_read
+    FROM
+        (SELECT id,
+                student_id,
+                message,
+                created_at,
+                ROW_NUMBER() OVER(PARTITION BY student_id
+                                ORDER BY created_at DESC) AS rn
+        FROM public.sensei_messages) sub
+    WHERE sub.rn <= 5 )
+    SELECT s.id,
+        s.first_name,
+        s.last_name,
+        s.email,
+        s.profile_picture,
+        s.sprite,
+        s.dob,
+        s.profile_message,
+        s.relationship_level,
+        s.phone_number,
+        COALESCE(json_agg(json_build_object('message', m.message, 'is_read', m.is_read)) FILTER (
+                                                                                                    WHERE m.message IS NOT NULL), '[]') AS messages
+    FROM public.students s
+    LEFT JOIN last_five_messages m ON m.student_id = s.id
+    GROUP BY s.id;
+"""
 
     result = await fetch_all(text(raw_query))
     rows = [dict(row) for row in result]
@@ -75,7 +104,6 @@ async def get_student_and_messages(student_id: int) -> Student | None:
     result = await fetch_one(text(raw_query), values={"student_id": student_id})
     if result is None:
         return None
-    print(dict(result))
     return Student(**result)
 
 

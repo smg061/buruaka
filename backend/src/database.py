@@ -2,7 +2,7 @@ from typing import Any
 
 from sqlalchemy import (Boolean, Column, CursorResult, DateTime, Enum,
                         ForeignKey, Identity, Insert, Integer, LargeBinary,
-                        MetaData, Select, String, Update, func)
+                        MetaData, Select, String, Update, func, text)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import DeclarativeBase
@@ -175,7 +175,20 @@ async def fetch_all(
         cursor: CursorResult = await conn.execute(select_query, values)
         return [r._asdict() for r in cursor.all()]
 
-
+async def fetch_raw(
+    raw_query: str, values: dict[str, str] = None
+) -> list[dict[str, Any]]:
+    async with engine.begin() as conn:
+        cursor: CursorResult = await conn.execute(text(raw_query), values)
+        return cursor.first()._asdict() if cursor.rowcount > 0 else None
+    
+async def fetch_raw_all(
+    raw_query: str, values: dict[str, str] = None
+) -> list[dict[str, Any]]:
+    async with engine.begin() as conn:
+        cursor: CursorResult = await conn.execute(text(raw_query), values)
+        return [r._asdict() for r in cursor.all()]
+    
 async def execute(select_query: Insert | Update) -> None:
     async with engine.begin() as conn:
         await conn.execute(select_query)

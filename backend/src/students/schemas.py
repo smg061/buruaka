@@ -1,8 +1,21 @@
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from src.models import ORJSONModel
 
+class Message(ORJSONModel):
+    id: int
+    student_id: int
+    message: str
+    created_at: datetime
+    is_read: bool
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True
+        json_encoders = {
+            datetime: lambda dt: dt.isoformat(),
+        }
 
 class Student(ORJSONModel):
     id: int
@@ -14,7 +27,7 @@ class Student(ORJSONModel):
     dob: datetime
     profile_message: str
     relationship_level: int
-    unread_messages: Optional[list[str]] = None
+    messages: Optional[list[Any]] = None
 
     class Config:
         from_attributes = True
