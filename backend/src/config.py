@@ -29,7 +29,7 @@ class Settings(BaseSettings):
 
     SITE_DOMAIN: str = "localhost"
 
-    ENVIRONMENT: Environment = Environment.LOCAL
+    ENVIRONMENT: Environment = None
 
     SENTRY_DSN: str | None = None
 

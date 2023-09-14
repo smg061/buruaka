@@ -28,11 +28,11 @@ app.add_middleware(
     allow_headers=settings.CORS_HEADERS,
 )
 
-if settings.ENVIRONMENT.is_deployed:
-    sentry_sdk.init(
-        dsn=settings.SENTRY_DSN,
-        environment=settings.ENVIRONMENT,
-    )
+# if settings.ENVIRONMENT.is_deployed:
+#     sentry_sdk.init(
+#         dsn=settings.SENTRY_DSN,
+#         environment=settings.ENVIRONMENT,
+#     )
 
 
 @app.get("/healthcheck", include_in_schema=False)
