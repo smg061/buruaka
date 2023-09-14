@@ -87,7 +87,7 @@ function ChatBubblesGroup({messages, ...props}: ChatBubblesGroupProps) {
   );
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const groupMessages = (messages: Message[]): Message[][] => {
+export const groupMessages = (messages: Message[]): Message[][] => {
   if (!messages || !messages.length) return [];
 
   const result: Message[][] = [];

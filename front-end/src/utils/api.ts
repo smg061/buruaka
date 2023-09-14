@@ -11,10 +11,11 @@ export type Student = {
     profile_message: string;
     relationship_level: number;
     dob: string;
-    unread_messages: string[] ;
+    messages: Message[] ;
 }
 
 export type Message = {
+    id: number;
     message: string;
     created_at: string;
     sender: 'student' | 'sensei';

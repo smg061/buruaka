@@ -1,6 +1,6 @@
 import {useQuery} from '@tanstack/react-query';
 import {type Student, api} from '@/utils/api';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import './styles/momotalk.css';
 import StudentInfo from './components/StudentInfo';
 import HeartSvg from './components/HeartSvg';
@@ -143,7 +143,7 @@ function FilterDialog({options, onChange, currentOption}: FilterDialogProps) {
     </div>
   );
 }
-const  Details = ({
+const Details = ({
   mode,
   currentStudent,
   setCurrentStudent,
@@ -192,7 +192,7 @@ const  Details = ({
       return (
         <>
           <div className="flex w-[40%] flex-col rounded-sm bg-white  shadow-md">
-            <div className="flex p-2">
+            <div className="flex h-12 p-2">
               <p className="w-full text-lg font-semibold text-slate-800">{`Student (${students.length})`}</p>
               <div className="relative flex w-full">
                 <TrapezoidButton variant="secondary" className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
@@ -258,16 +258,15 @@ const  Details = ({
       return (
         <>
           <div className="flex w-[40%] flex-col rounded-sm bg-white  shadow-md">
-            <div className="flex flex-row p-2">
+            <div className="flex h-12 flex-row p-2">
               <div className="w-1/2">
-                <p className="text-md font-semibold text-slate-800">{`Unread Messages (${unreadMessages})`}</p>
+              <p className="w-full text-md font-semibold text-slate-800">{`Unread Messages (${unreadMessages})`}</p>
               </div>
               <div className="flex w-1/2">
                 <div className="relative flex w-full">
-                  <div className="border-1 trapezoid absolute h-full w-full border-black bg-slate-500"></div>
-                  <button className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
+                  <TrapezoidButton variant="secondary" className="z-1 relative w-full px-1" onClick={() => setShowFilterDialog(!showFilterDialog)}>
                     <div className=""> {currentFilter?.label || ''} </div>
-                  </button>
+                  </TrapezoidButton>
                 </div>
                 <button
                   className="px-2"
@@ -287,16 +286,19 @@ const  Details = ({
               <p>All students</p>
             </div>
             <div className="scrollbar-hide overflow-y-scroll  ">
-              {orderedStudents.map(student => (
-                <StudentRow
-                  displayMessage={student.unread_messages[0] ?? 'No messages yet'}
-                  key={`${student.first_name}-${student.last_name}`}
-                  student={student}
-                  onClick={() => setCurrentStudent(student)}
-                  selected={currentStudent?.id === student.id}
-                  icon={<UnreadMessageIconSquare count={student.unread_messages.length} />}
-                />
-              ))}
+              {orderedStudents.map(student => {
+                const unreadMessages = student.messages.filter(m => m.is_read === false).length;
+                return (
+                  <StudentRow
+                    displayMessage={student.messages?.[0]?.message ?? 'No messages yet'}
+                    key={`${student.first_name}-${student.last_name}`}
+                    student={student}
+                    onClick={() => setCurrentStudent(student)}
+                    selected={currentStudent?.id === student.id}
+                    icon={unreadMessages > 0 ? <UnreadMessageIconSquare count={unreadMessages} /> : undefined}
+                  />
+                );
+              })}
             </div>
           </div>
           <div className="w-[53%] flex-col rounded-sm bg-white">
@@ -315,13 +317,6 @@ export default function Momotalk() {
 
   const [showFilterDialog, setShowFilterDialog] = useState(false);
 
-  useEffect(() => {
-    const s = async () => {
-      const p = await api.getUser();
-      console.log(p);
-    };
-    s().catch(e => console.log(e));
-  }, []);
   const onTabChange = (tab: Tab) => {
     setCurrentTab(tab);
     setShowFilterDialog(false);
@@ -330,7 +325,7 @@ export default function Momotalk() {
     <MomotalkContainer>
       <div className="w-[7%] rounded-bl-md bg-sidebar">
         <div className={`flex h-16 w-full  justify-center ${currentTab === 'students' ? 'bg-slate-500' : 'opacity-60'}`}>
-          <div className='w-full px-2' onClick={() => onTabChange('students')}>
+          <div className="w-full px-2" onClick={() => onTabChange('students')}>
             <UserIcon className="h-3/5 w-full fill-white stroke-white" />
           </div>
         </div>
