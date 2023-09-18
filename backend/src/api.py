@@ -9,6 +9,7 @@ from src.auth.router import router as auth_router
 from src.config import app_configs, settings
 from src.messages.router import router as messages_router
 from src.students.router import router as students_router
+from src.langchain.router import router as langchain_router
 
 
 @asynccontextmanager
@@ -43,3 +44,4 @@ async def healthcheck() -> dict[str, str]:
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(messages_router, prefix="/api/v1", tags=["Messages"])
 app.include_router(students_router, prefix="/api/v1", tags=["Students"])
+app.include_router(langchain_router, prefix="/api/v1/ai", tags=["AI Responses"])

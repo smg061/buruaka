@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     CORS_HEADERS: list[str]
 
     APP_VERSION: str = "1"
+    
+    OPENAI_API_KEY: str
 
     class Config:
         env_file = ".env"

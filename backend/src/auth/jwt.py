@@ -3,7 +3,7 @@ from typing import Any, Optional
 
 from fastapi import Depends, Request
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
-from fastapi.security import OAuth2
+from fastapi.security import OAuth2, OAuth2PasswordBearer
 from fastapi.security.utils import get_authorization_scheme_param
 from jose import JWTError, jwt
 
@@ -11,7 +11,7 @@ from src.auth.config import auth_config
 from src.auth.exceptions import AuthorizationFailed, AuthRequired, InvalidToken
 from src.auth.schemas import JWTData
 
-
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/users/tokens", auto_error=False)
 class OAuth2PasswordBearerWithCookie(OAuth2):
     def __init__(
         self,
@@ -36,9 +36,6 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
             else:
                 return None
         return param
-
-
-oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/auth/users/tokens")
 
 
 def create_access_token(

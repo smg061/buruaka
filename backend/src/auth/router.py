@@ -56,12 +56,12 @@ async def auth_user(auth_data: AuthUser, response: Response) -> AccessTokenRespo
     refresh_token = await service.create_refresh_token(user_id=user["id"])
     access_token = jwt.create_access_token(user=user)
     response.set_cookie(**utils.get_refresh_token_settings(refresh_token))
-    response.set_cookie(
-        key="access_token",
-        value=f"Bearer {access_token}",
-        httponly=True,
-        domain="localhost",
-    )
+    # response.set_cookie(
+    #     key="access_token",
+    #     value=f"Bearer {access_token}",
+    #     httponly=True,
+    #     domain="localhost",
+    # )
     return AccessTokenResponse(
         access_token=access_token,
         refresh_token=refresh_token,
