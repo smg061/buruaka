@@ -17,7 +17,7 @@ from langchain.chains import LLMChain
 from src.langchain.config import langchain_config
 
 llm = ChatOpenAI(openai_api_key=langchain_config.ApiKey,
-                  model_name="gpt-3.5-turbo", temperature=0.3)
+                  model_name="gpt-3.5-turbo", temperature=0.8)
 template = """
  Your name is Hayase Yuuka
 You will be provided a story of your experiences, in the form of a list of summaries of events.
@@ -98,6 +98,6 @@ conversation = LLMChain(
     memory=memory
 )
 
-def get_ai_response() -> str:
-    response = conversation({"sensei_message": "What is your name?"})
+def get_ai_response(message: str ) -> str:
+    response = conversation({"sensei_message": message})
     return response
